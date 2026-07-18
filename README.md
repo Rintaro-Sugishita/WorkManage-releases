@@ -1,41 +1,35 @@
-# WorkManage.Contracts
+# WorkManage
 
-WorkManage 拡張機能開発のための共有コントラクトライブラリです。
+作業時間の記録・集計・レポートを行う Windows デスクトップアプリケーションです。
 
-## 概要
+## ダウンロード / インストール
 
-WorkManage アプリケーションの拡張機能を開発する際に必要な、データモデル・入出力データクラス・拡張イベント定義を提供します。
+[Releases](https://github.com/Rintaro-Sugishita/WorkManage-releases/releases) から最新版の `WorkManage-vX.Y.Z.zip` をダウンロードし、展開して `WorkManage.exe` を実行してください。
 
-## ドキュメント
+- 自己完結（SelfContained）・単一ファイル発行のため、**.NET のインストールは不要**です。
+- 対応 OS: Windows 10 (1809) 以降 / x64
 
-nupkg をダウンロードしなくても、以下から直接閲覧できます（公開リポジトリ `WorkManage-releases`）。
+## 主な機能
 
-- [拡張開発ガイド (EXTENSION_GUIDE.md)](https://github.com/Rintaro-Sugishita/WorkManage-releases/blob/master/docs/EXTENSION_GUIDE.md) — 拡張機能の作り方
-- [拡張インターフェース仕様](https://github.com/Rintaro-Sugishita/WorkManage-releases/blob/master/docs/extension-interface-spec.md)
-- [DB スキーマ](https://github.com/Rintaro-Sugishita/WorkManage-releases/blob/master/docs/db-schema.md)
+- 作業時間の記録・集計
+- 日報 / 残業レポート
+- タイムライン ビューア（手動追加・分割・移動・幅変更）
+- データベースへの送信
+- 拡張機能（プラグイン）対応
 
-## 含まれる主なクラス
+## 拡張機能の開発
 
-| 名前空間 / クラス | 説明 |
-|---|---|
-| `WorkManage.Data.WorkClass` | 作業データのメインクラス |
-| `WorkManage.Data.ProjectData` | プロジェクトデータ |
-| `WorkManage.Data.ProcessData` | 工程データ |
-| `WorkManage.ExtensionEvents` | 拡張機能イベント定義 |
-| `WorkManage.ScreenType` | 画面種別の列挙体 |
-| `WorkManage.WorkManageExtensionMethods` | 拡張メソッド群 |
-| `WorkManage.SettingClass` | 設定クラス |
-
-## インストール
+拡張機能は `WorkManage.Contracts` パッケージを参照して開発します。
 
 ```
 dotnet add package WorkManage.Contracts
 ```
 
-## 依存関係
+ドキュメント（nupkg をダウンロードしなくても閲覧できます）:
 
-- .NET 10.0 (Windows 10 1809 以降)
-- FrostNova.Core
+- [拡張開発ガイド (EXTENSION_GUIDE.md)](docs/EXTENSION_GUIDE.md)
+- [拡張インターフェース仕様](docs/extension-interface-spec.md)
+- [DB スキーマ](docs/db-schema.md)
 
 ## ライセンス
 
