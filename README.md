@@ -6,6 +6,14 @@ WorkManage 拡張機能開発のための共有コントラクトライブラリ
 
 WorkManage アプリケーションの拡張機能を開発する際に必要な、データモデル・入出力データクラス・拡張イベント定義を提供します。
 
+## ドキュメント
+
+nupkg をダウンロードしなくても、以下から直接閲覧できます（公開リポジトリ `WorkManage-releases`）。
+
+- [拡張開発ガイド (EXTENSION_GUIDE.md)](https://github.com/Rintaro-Sugishita/WorkManage-releases/blob/master/docs/EXTENSION_GUIDE.md) — 拡張機能の作り方
+- [拡張インターフェース仕様](https://github.com/Rintaro-Sugishita/WorkManage-releases/blob/master/docs/extension-interface-spec.md)
+- [DB スキーマ](https://github.com/Rintaro-Sugishita/WorkManage-releases/blob/master/docs/db-schema.md)
+
 ## 含まれる主なクラス
 
 | 名前空間 / クラス | 説明 |
@@ -26,7 +34,7 @@ dotnet add package WorkManage.Contracts
 
 ## 依存関係
 
-- .NET 9.0 (Windows 10 1803 以降)
+- .NET 10.0 (Windows 10 1809 以降)
 - FrostNova.Core
 
 ## ライセンス
