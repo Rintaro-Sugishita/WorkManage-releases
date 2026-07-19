@@ -45,4 +45,4 @@ dotnet add package WorkManage.Contracts
 
 ## ライセンス
 
-本プロジェクトのライセンスに準じます。
+[LICENSE.md](LICENSE.md) をご確認ください。**無償・個人/商用利用可**、**無改変での再配布可**（クローズドソース。MIT 等の OSS ライセンスではありません）。
