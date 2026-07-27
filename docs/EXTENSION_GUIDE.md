@@ -130,7 +130,76 @@ return 0; // 0 = Continue（続行）
 
 ---
 
-## 6. 注意点
+## 6. 例外・エラーを本体へ伝える
+
+拡張の処理中にエラーが起きたとき、本体（WorkManage）へ**確実に**その情報を伝える方法は 2 つあります。
+
+### 6.1 想定内のエラー（推奨）: `ExceptionText` で伝える
+
+`OutputBase`（各 `OutputData` の基底）の `ExceptionText` に文字列を入れて **stdout に JSON 出力**すると、本体はそれを**例外として扱い、ユーザーにメッセージ表示したうえで以降の処理を中断**します（プロセスをクラッシュさせません）。
+
+> ⚠ これは **`NeedWait: true` の関数拡張でのみ**有効です。`NeedWait: false`（撃ちっぱなし）では本体は stdout を読みません。
+
+```csharp
+using WorkManage.InputData;
+using WorkManage.OutputData;
+
+// 起動引数から -d <JSON> を取り出す
+static string? GetArg(string[] args, string key)
+{
+    for (int i = 0; i < args.Length - 1; i++)
+        if (args[i] == key) return args[i + 1];
+    return null;
+}
+
+var output = new ReportingOutData();
+try
+{
+    var json = GetArg(args, "-d");
+    var input = json is null ? null : ReportingInputData.FromJson(json);
+
+    if (input is null || input.Works.Count == 0)
+        throw new InvalidOperationException("報告対象の作業がありません。");
+
+    // …本処理（外部システム送信など）…
+
+    Console.Out.Write(output.ToJson(false)); // stdout は JSON のみ
+    return 0; // Continue（続行）
+}
+catch (Exception ex)
+{
+    // 想定内エラーはクラッシュさせず、ExceptionText で本体へ伝える。
+    output.ExceptionText = $"MyExtension でエラー: {ex.Message}";
+    Console.Error.WriteLine(ex);             // 詳細は stderr（ログ/イベントビューア向け）
+    Console.Out.Write(output.ToJson(false)); // stdout は JSON のみ
+    return 0; // 本体は ExceptionText を見てメッセージ表示し、以降を中断する
+}
+```
+
+**本体側の挙動**: `ExceptionText` が空でなければ、その文字列がそのままユーザーに表示され、拡張チェーンは中断されます（終了コードは `0` のままで構いません。メッセージの伝達は `ExceptionText` が担います）。
+
+### 6.2 想定外の例外（クラッシュ・ランタイム欠如など）
+
+`ExceptionText` を設定できないまま拡張が異常終了した場合（未捕捉例外での終了、`.NET` ランタイム未インストールで起動失敗、非ゼロ終了コードなど）でも、本体は次を検知して「**拡張機能が異常終了しました（終了コード / stderr）**」を表示・記録します。
+
+- `Process.Start` の失敗（exe が無い・起動不可）
+- **stderr** への出力（本体が収集して表示・ログ）
+- プロトコルの正規終了コード（`0`=Continue / `-1`=Cancel / `1`=Fail / `2`=Overwrite）**以外**の終了コード
+
+ただしこの経路は**メッセージ内容を制御できない**ため、ユーザーに分かりやすく伝えたいエラーは **6.1 の `ExceptionText`** を使ってください。診断用の詳細（スタックトレース等）は **stderr** に出すと、異常終了時に本体側で拾われます。
+
+### 6.3 使い分けの目安
+
+| ケース | 返し方 |
+|---|---|
+| 想定内のエラーをユーザーへ知らせて中断したい | `ExceptionText` にメッセージ（推奨） |
+| メッセージ不要で「失敗」として中断したい | 終了コード `1`(Fail) |
+| 中断だけしたい（エラーではない） | 終了コード `-1`(Cancel) |
+| 想定外のクラッシュ | そのまま異常終了で可（本体が検知）。詳細は stderr へ |
+
+---
+
+## 7. 注意点
 
 - `ExtensionEventName` は `ExtensionEvents` の名称と大文字小文字まで一致させること。
 - 出力 JSON は **stdout のみ**。ログや診断は **stderr** に出す（stdout を JSON 以外で汚さない）。
